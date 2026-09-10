@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Dashboard . ContactHub{% endblock %}
+
+{% block content %}
+
+<div class="stats-row">
+    <div class="stat=card">
+        <span class="stat-number">{{ total }}</span>
+        <span class="stat-label">Contacts</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ favorites }}</span>
+        <span class="stat-label">Favorites</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ group_count }}</span>
+        <span class="stat-label">Groups</span>
+    </div>
+</div>
+
+<div class="toolbar">
+    <input type="text" id="search-box" placeholder="Search by name, phone, or email..." autocomplete="off">
+    <div class="filter-chips" id="filter-chips">
+        <button class="chip active" data-group="all">All</button>
+        <button class="chip" data-group="favorites">Favorites</button>
+        {% for g in groups %}
+        <button class="chip" data-group="{{ g }}">{{ g }} </button>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="contact-grid" id="contact-grid">
+    {% for c in contacts %}
+    <div class="contact-card" data-name="{{ (c.first_name ~ ' ' ~ (c.last_name or ''))|lower }}"
+        data-phone="{{ c.phone }}" data-email="{{ (c.email or '')|lower }}" data-group="{{ c.group_name }}"
+        data-favorites="{{ c.favorite }}">
+
+        <div class="card-top">
+            <div class="avatar">{{ c.first_name[0]|upper }}</div>
+            <button class="fav-btn" data-id="{{ c.id }}" title="Toggle favorite">
+                {{ "⭐" if c.favorite else "☆" }}
+            </button>
+        </div>
+
+        <h3 class="contact-name">{{ c.first_name }} {{ c.last_name or '' }}</h3>
+        <span class="group-tag">{{ c.group_name }}</span>
+
+        <div class="contact-details">
+            <a href="tel:{{ c.phone }}">{{ c.phone }}</a>
+            {% if c.email %}<a href="mailto:{{ c.email }}">{{ c.email }}</a>{% endif %}
+            {% if c.address %}<span>{{ c.address }}</span>{% endif %}
+        </div>
+
+        <div class="card-actions">
+            <a href="{{ url_for('edit_contact', contact_id=c.id) }}" class="btn btn-secondary btn-sm">Edit</a>
+            <button class="btn btn-danger btn-sm delete-btn" data-id="{{ c.id }}"
+                data-name="{{ c.first_name }} {{ c.last_name or '' }} ">
+                Delete
+            </button>
+        </div>
+    </div>
+    {% else %}
+    <p class="empty-state">No contacts yet.Click below to add your first one!</p>
+    {% endfor %}
+</div>
+
+<a href="{{ url_for('add_contact') }}" class="fab">Add Contact</a>
+
+{% endblock %}

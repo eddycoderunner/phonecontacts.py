@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ContactHub{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="brand">ContactHub</a>
+        <div class="nav-actions">
+            <button id="theme-toggle" class="icon-btn" title="Toggle dark mode">🌙</button>
+        </div>
+    </nav>
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div id="flash-container">
+            {% for category, message in messages %}
+            <div class="toast toast-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <div id="delete-model" class="modal-overlay hidden">
+        <div class="modal">
+            <p id="delete-model-text">Are you sure you want to delete this contact?</p>
+            <form id="delete-form" method="POST">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="delete-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
